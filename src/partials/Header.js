@@ -154,7 +154,7 @@ function Header() {
                       alignItems:"center",
                     }}
                   >
-                    Edit Profile
+                    View Profile
                   </Link>
                 </div>
               )}

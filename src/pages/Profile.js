@@ -6,7 +6,6 @@ function Profile() {
   const [fname, setFirstName] = useState("");
   const [lname, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [dob, setDOB] = useState("");
   const [prof, setProf] = useState("");
   const [user, setUser] = useState({});
   const [password, setPassword] = useState("");
@@ -14,9 +13,11 @@ function Profile() {
 
   async function ProfileEdit(e) {
     e.preventDefault();
-    let item = { fname, lname, dob, prof, email, password };
+    let item = { fname, lname, prof, email, password };
     console.log(item);
-    let result = await fetch("http://localhost:3000/signup", {
+    console.log(user.id);
+    let result = await fetch(`http://localhost:3000/signup/${user.id}`, {
+    
       method: "PUT",
       body: JSON.stringify(item),
       headers: {
@@ -28,12 +29,24 @@ function Profile() {
     localStorage.setItem("user-info", JSON.stringify(result));
     history.push("./");
   }
+ async function handleDelete(){
+    localStorage.removeItem("user-info");
+    let result = await fetch(`http://localhost:3000/signup/${user.id}`,{
+        method: "DELETE",
+        headers:{
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+    });
+    history.push("./");
+  }
 
   useEffect(() => {
     if (localStorage.getItem("user-info")) {
       setUser(JSON.parse(localStorage.getItem("user-info")));
     }
   }, []);
+
   return (
     <div className="max-w-sm mx-auto item-center">
       <div style={{
@@ -68,10 +81,10 @@ function Profile() {
             <input
               id="name"
               type="text"
-              value={fname}
+              value={user.fname}
               onChange={(e) => setFirstName(e.target.value)}
               className="form-input w-full text-gray-800"
-              placeholder={user.fname}
+            
               required
             />
           </div>
@@ -87,10 +100,9 @@ function Profile() {
             <input
               id="name"
               type="text"
-              value={lname}
+              value={user.lname}
               onChange={(e) => setLastName(e.target.value)}
               className="form-input w-full text-gray-800"
-              placeholder={user.lname}
               required
             />
           </div>
@@ -106,10 +118,9 @@ function Profile() {
             <input
               id="name"
               type="text"
-              value={prof}
+              value={user.prof}
               onChange={(e) => setProf(e.target.value)}
               className="form-input w-full text-gray-800"
-              placeholder={user.prof}
               required
             />
           </div>
@@ -125,10 +136,9 @@ function Profile() {
             <input
               id="email"
               type="email"
-              value={email}
+              value={user.email}
               onChange={(e) => setEmail(e.target.value)}
               className="form-input w-full text-gray-800"
-              placeholder={user.email}
               required
             />
           </div>
@@ -158,8 +168,14 @@ function Profile() {
             </button>
           </div>
         </div>
-        
       </form>
+      <div className="flex flex-wrap -mx-3 mt-6">
+          <div onClick={handleDelete}className="w-full px-3">
+            <button className="btn text-white bg-red-900 hover:bg-red-700 w-full">
+              Delete Account
+            </button>
+          </div>
+        </div>
     </div>
   );
 }
